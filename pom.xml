@@ -249,11 +249,10 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <properties>
-        <keycloak.version>9.0.2</keycloak.version>
-        <openmrsPlatformVersion>2.4.0-SNAPSHOT</openmrsPlatformVersion>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
-    </properties>
+	<properties>
+		<keycloak.version>11.0.0</keycloak.version>
+		<openmrsPlatformVersion>2.4.0-SNAPSHOT</openmrsPlatformVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
+	</properties>
 </project>
