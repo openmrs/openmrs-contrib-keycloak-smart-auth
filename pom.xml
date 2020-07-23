@@ -250,6 +250,7 @@
             </plugins>
         </pluginManagement>
     </build>
+
     <properties>
         <keycloak.version>11.0.0</keycloak.version>
         <openmrsPlatformVersion>2.4.0-SNAPSHOT</openmrsPlatformVersion>
