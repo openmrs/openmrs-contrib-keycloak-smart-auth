@@ -7,8 +7,9 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider;
+package org.openmrs.contrib.keycloak.smart.auth.action;
 
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.Config;
 import org.keycloak.authentication.RequiredActionContext;
 import org.keycloak.authentication.RequiredActionFactory;
@@ -22,23 +23,23 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import org.jboss.logging.Logger;
+import org.openmrs.contrib.keycloak.smart.auth.token.ExternalApplicationNotificationActionToken;
+import org.openmrs.contrib.keycloak.smart.auth.token.ExternalApplicationNotificationActionTokenHandler;
 
 /**
  *
  * @author hmlnarik
  */
+@Slf4j
 public class RedirectToExternalApplication implements RequiredActionProvider, RequiredActionFactory {
-
-    private static final Logger logger = Logger.getLogger(RedirectToExternalApplication.class);
 
     public static final String ID = "redirect-to-external-application";
 
     public static final String DEFAULT_APPLICATION_ID = "application-id";
 
-    private String externalApplicationUrl;
+    private String externalApplicationUrl = "http://localhost:8080/?token={TOKEN}";
 
-    private String applicationId;
+    private String applicationId = DEFAULT_APPLICATION_ID;
 
     @Override
     public void evaluateTriggers(RequiredActionContext context) {
@@ -102,12 +103,6 @@ public class RedirectToExternalApplication implements RequiredActionProvider, Re
 
     @Override
     public void init(Config.Scope config) {
-        this.externalApplicationUrl = config.get("external-application-url");
-        if (this.externalApplicationUrl == null) {
-            throw new RuntimeException("You have to set up external-application-url parameter in spi configuration with token position marked with \"{TOKEN}\" (without quotes) first.");
-        }
-        this.applicationId = config.get("application-id", DEFAULT_APPLICATION_ID);
-        logger.infof("Using application ID: \"%s\"", this.applicationId);
     }
 
     @Override

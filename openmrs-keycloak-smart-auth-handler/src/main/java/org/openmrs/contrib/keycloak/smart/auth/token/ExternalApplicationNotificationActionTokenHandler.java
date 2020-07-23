@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider;
+package org.openmrs.contrib.keycloak.smart.auth.token;
 
 import org.keycloak.Config.Scope;
 import org.keycloak.TokenVerifier;
@@ -16,7 +16,9 @@ import org.keycloak.authentication.actiontoken.AbstractActionTokenHander;
 import org.keycloak.authentication.actiontoken.*;
 import org.keycloak.common.VerificationException;
 import org.keycloak.common.util.Base64;
-import org.keycloak.events.*;
+import org.keycloak.events.Errors;
+import org.keycloak.events.EventBuilder;
+import org.keycloak.events.EventType;
 import org.keycloak.forms.login.LoginFormsProvider;
 import org.keycloak.models.UserModel;
 import org.keycloak.representations.JsonWebToken;
@@ -30,6 +32,7 @@ import java.util.Collections;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.core.Response;
 import org.jboss.logging.Logger;
+import org.openmrs.contrib.keycloak.smart.auth.action.RedirectToExternalApplication;
 
 /**
  * Action token handler for verification of e-mail address.
