@@ -9,13 +9,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openmrs-keycloak-ear</artifactId>
+	<artifactId>openmrs-keycloak-smart-auth-ear</artifactId>
 	<packaging>ear</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>openmrs-keycloak-smart-auth-handler</artifactId>
+			<artifactId>${project.parent.artifactId}-handler</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
@@ -31,7 +31,7 @@
 					<modules>
 						<jarModule>
 							<groupId>${project.parent.groupId}</groupId>
-							<artifactId>openmrs-keycloak-smart-auth-handler</artifactId>
+							<artifactId>${project.parent.artifactId}-handler</artifactId>
 							<bundleDir>/</bundleDir>
 							<includeInApplicationXml>true</includeInApplicationXml>
 						</jarModule>
