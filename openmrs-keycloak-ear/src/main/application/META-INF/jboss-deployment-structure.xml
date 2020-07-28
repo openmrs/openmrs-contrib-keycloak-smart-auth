@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <sub-deployment name="org.openmrs.contrib-openmrs-keycloak-smart-auth-handler-1.0.0-SNAPSHOT.jar">
+        <dependencies>
+            <module name="org.keycloak.keycloak-services"/>
+        </dependencies>
+    </sub-deployment>
+</jboss-deployment-structure>
