@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <sub-deployment name="org.openmrs.contrib-openmrs-keycloak-smart-auth-1.0-SNAPSHOT.jar">
+        <dependencies>
+            <module name="org.keycloak.keycloak-services"/>
+            <module name="org.keycloak.keycloak-common"/>
+            <module name="org.keycloak.keycloak-core"/>
+        </dependencies>
+    </sub-deployment>
+</jboss-deployment-structure>
