@@ -71,12 +71,16 @@ public class ExternalAppAuthenticator implements Authenticator {
 		final String clientId = authSession.getClient().getClientId();
 
 		// Create a token used to return back to the current authentication flow
-		String token = new ExternalApplicationNotificationActionToken(
-				context.getUser().getUsername(),
+		ExternalApplicationNotificationActionToken externalToken = new ExternalApplicationNotificationActionToken(
+				context.getUser().getId(),
 				absoluteExpirationInSecs,
 				clientId,
 				applicationId
-		).serialize(
+		);
+
+		externalToken.setNote("username", context.getUser().getUsername());
+
+		String token = externalToken.serialize(
 				context.getSession(),
 				context.getRealm(),
 				context.getUriInfo()
