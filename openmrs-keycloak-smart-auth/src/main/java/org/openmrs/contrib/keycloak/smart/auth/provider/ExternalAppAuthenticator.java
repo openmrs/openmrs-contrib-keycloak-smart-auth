@@ -9,12 +9,19 @@
  */
 package org.openmrs.contrib.keycloak.smart.auth.provider;
 
+import org.apache.commons.codec.binary.Base64;
 import org.keycloak.TokenVerifier;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
+import org.keycloak.authentication.actiontoken.DefaultActionToken;
 import org.keycloak.common.VerificationException;
 import org.keycloak.common.util.Time;
+import org.keycloak.crypto.Algorithm;
+import org.keycloak.crypto.KeyWrapper;
+import org.keycloak.crypto.MacSignatureSignerContext;
+import org.keycloak.crypto.SignatureSignerContext;
+import org.keycloak.jose.jws.JWSBuilder;
 import org.keycloak.models.Constants;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
@@ -29,11 +36,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Objects;
+import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import static org.keycloak.OAuth2Constants.JWT;
 import static org.openmrs.contrib.keycloak.smart.auth.provider.ExternalApplicationNotificationActionTokenHandler.QUERY_PARAM_APP_TOKEN;
 
 /**
@@ -78,7 +87,21 @@ public class ExternalAppAuthenticator implements Authenticator {
 				applicationId
 		);
 
-		externalToken.setNote("username", context.getUser().getUsername());
+		DefaultActionToken userToken = new DefaultActionToken();
+		userToken.setSubject(context.getUser().getUsername());
+		userToken.issuedNow();
+		String issuer = Urls.realmIssuer(context.getUriInfo().getBaseUri(), context.getRealm().getName());
+		userToken.issuer(issuer);
+		userToken.audience("http://localhost:8080/openmrs/smartonfhir");
+
+		KeyWrapper key = new KeyWrapper();
+		key.setAlgorithm(Algorithm.HS256);
+		key.setSecretKey(new SecretKeySpec(java.util.Base64.getDecoder().decode("aSqzP4reFgWR4j94BDT1r+81QYp/NYbY9SBwXtqV1ko="), "HmacSHA256"));
+		SignatureSignerContext signer = new MacSignatureSignerContext(key);
+
+		String encodedUserToken = new JWSBuilder().type(JWT).jsonContent(userToken).sign(signer);
+
+		externalToken.setNote("user", encodedUserToken);
 
 		String token = externalToken.serialize(
 				context.getSession(),
