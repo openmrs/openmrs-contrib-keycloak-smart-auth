@@ -56,6 +56,8 @@ public class ExternalAppAuthenticator implements Authenticator {
 
 	public static final String DEFAULT_APPLICATION_ID = "application-id";
 
+	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
+
 	@Override
 	public void authenticate(AuthenticationFlowContext context) {
 		String externalApplicationUrl = null;
@@ -96,7 +98,10 @@ public class ExternalAppAuthenticator implements Authenticator {
 
 		KeyWrapper key = new KeyWrapper();
 		key.setAlgorithm(Algorithm.HS256);
-		key.setSecretKey(new SecretKeySpec(java.util.Base64.getDecoder().decode("aSqzP4reFgWR4j94BDT1r+81QYp/NYbY9SBwXtqV1ko="), "HmacSHA256"));
+		key.setSecretKey(
+				new SecretKeySpec(java.util.Base64.getDecoder().decode(context.getAuthenticatorConfig().getConfig()
+						.get(ExternalAppAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY)),
+						"HmacSHA256"));
 		SignatureSignerContext signer = new MacSignatureSignerContext(key);
 
 		String encodedUserToken = new JWSBuilder().type(JWT).jsonContent(userToken).sign(signer);
