@@ -7,9 +7,8 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider;
+package org.openmrs.contrib.keycloak.smart.auth.provider.authenticator;
 
-import org.apache.commons.codec.binary.Base64;
 import org.keycloak.TokenVerifier;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
@@ -29,7 +28,6 @@ import org.keycloak.models.UserModel;
 import org.keycloak.representations.JsonWebToken;
 import org.keycloak.services.Urls;
 import org.keycloak.services.messages.Messages;
-import org.keycloak.sessions.AuthenticationSessionCompoundId;
 import org.keycloak.sessions.AuthenticationSessionModel;
 
 import java.io.UnsupportedEncodingException;
@@ -41,9 +39,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
+import org.openmrs.contrib.keycloak.smart.auth.provider.actionToken.ExternalApplicationNotificationActionToken;
+import org.openmrs.contrib.keycloak.smart.auth.provider.actionToken.ExternalApplicationNotificationActionTokenHandler;
 
 import static org.keycloak.OAuth2Constants.JWT;
-import static org.openmrs.contrib.keycloak.smart.auth.provider.ExternalApplicationNotificationActionTokenHandler.QUERY_PARAM_APP_TOKEN;
+import static org.openmrs.contrib.keycloak.smart.auth.provider.actionToken.ExternalApplicationNotificationActionTokenHandler.QUERY_PARAM_APP_TOKEN;
 
 /**
  * @author hmlnarik

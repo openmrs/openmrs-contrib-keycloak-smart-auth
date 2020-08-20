@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider;
+package org.openmrs.contrib.keycloak.smart.auth.provider.actionToken;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.keycloak.authentication.actiontoken.DefaultActionToken;

@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider;
+package org.openmrs.contrib.keycloak.smart.auth.provider.actionToken;
 
 import org.keycloak.Config.Scope;
 import org.keycloak.TokenVerifier;
@@ -19,7 +19,6 @@ import org.keycloak.common.VerificationException;
 import org.keycloak.common.util.Base64;
 import org.keycloak.events.*;
 import org.keycloak.representations.JsonWebToken;
-import org.keycloak.services.managers.AuthenticationSessionManager;
 import org.keycloak.services.messages.Messages;
 import org.keycloak.sessions.AuthenticationSessionCompoundId;
 import org.keycloak.sessions.AuthenticationSessionModel;
