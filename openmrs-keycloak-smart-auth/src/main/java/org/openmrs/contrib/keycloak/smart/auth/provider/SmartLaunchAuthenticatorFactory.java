@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.contrib.keycloak.smart.auth.provider.authenticator;
+package org.openmrs.contrib.keycloak.smart.auth.provider;
 
 import org.keycloak.Config;
 import org.keycloak.authentication.Authenticator;
@@ -20,34 +20,33 @@ import org.keycloak.provider.ProviderConfigProperty;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.keycloak.provider.ProviderConfigProperty.PASSWORD;
 import static org.keycloak.provider.ProviderConfigProperty.STRING_TYPE;
 
 /**
  * @author hmlnarik
  */
-public class ExternalAppAuthenticatorFactory implements AuthenticatorFactory {
+public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	private static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
 			AuthenticationExecutionModel.Requirement.REQUIRED,
 			AuthenticationExecutionModel.Requirement.DISABLED
 	};
 
-	public static final String CONFIG_APPLICATION_ID = "application-id";
+	public static final String CONFIG_SMART_PATIENT_SELECTION_URL = "smart-patient-selection-url";
 
-	public static final String CONFIG_EXTERNAL_APP_URL = "external-application-url";
+	public static final String CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "smart-launch-secret-key";
 
-	public static final String CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "external-smart-launch-secret-key";
-
-	public static final String ID = "external-application-authenticator";
+	public static final String ID = "smart-application-authenticator";
 
 	@Override
 	public String getDisplayType() {
-		return "External Application Authenticator";
+		return "Smart Application Authenticator";
 	}
 
 	@Override
 	public String getReferenceCategory() {
-		return null;
+		return "Smart Launch";
 	}
 
 	@Override
@@ -72,25 +71,21 @@ public class ExternalAppAuthenticatorFactory implements AuthenticatorFactory {
 
 	@Override
 	public List<ProviderConfigProperty> getConfigProperties() {
-		ProviderConfigProperty rep1 = new ProviderConfigProperty(CONFIG_APPLICATION_ID, "Application ID",
-				"Application ID sent in the token",
-				STRING_TYPE, ExternalAppAuthenticator.DEFAULT_APPLICATION_ID);
-
-		ProviderConfigProperty rep2 = new ProviderConfigProperty(CONFIG_EXTERNAL_APP_URL, "External Application URL",
+		ProviderConfigProperty patientSelectionUrl = new ProviderConfigProperty(CONFIG_SMART_PATIENT_SELECTION_URL, "Patient Selection Application URL",
 				"URL of the application to redirect to. It has to contain token position marked with \"{TOKEN}\" (without quotes).",
-				STRING_TYPE, ExternalAppAuthenticator.DEFAULT_EXTERNAL_APP_URL);
+				STRING_TYPE, SmartLaunchAuthenticator.DEFAULT_PATIENT_SELECTION_APP_URL);
 
-		ProviderConfigProperty rep3 = new ProviderConfigProperty(CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY,
+		ProviderConfigProperty smartLaunchKey = new ProviderConfigProperty(CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY,
 				"External SMART Launch Secret Key",
 				"HmacSHA256 secret key for smart launch external application.",
-				STRING_TYPE, ExternalAppAuthenticator.DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY);
+				PASSWORD, SmartLaunchAuthenticator.DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY);
 
-		return Arrays.asList(rep1, rep2, rep3);
+		return Arrays.asList(patientSelectionUrl, smartLaunchKey);
 	}
 
 	@Override
 	public Authenticator create(KeycloakSession keycloakSession) {
-		return new ExternalAppAuthenticator();
+		return new SmartLaunchAuthenticator();
 	}
 
 	@Override
