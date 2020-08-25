@@ -1,1 +1,1 @@
-org.openmrs.contrib.keycloak.smart.auth.provider.actionToken.ExternalApplicationNotificationActionTokenHandler
+org.openmrs.contrib.keycloak.smart.auth.token.SmartPatientSelectionActionTokenHandler
