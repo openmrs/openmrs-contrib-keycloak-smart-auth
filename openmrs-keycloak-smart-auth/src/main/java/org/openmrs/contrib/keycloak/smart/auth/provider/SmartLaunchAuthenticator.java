@@ -58,6 +58,8 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	public static final String SMART_PATIENT_SELECTION = "smart-patient-selection";
 
+	public static final String SMART_NOTE_PREFIX = "smart-oidc-note.";
+
 	public static final String DEFAULT_PATIENT_SELECTION_APP_URL = "http://localhost:8080/openmrs/smartonfhir/findPatient.page?app=smart.search&token={TOKEN}";
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
@@ -158,7 +160,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		appToken.getOtherClaims()
 				.forEach((key, value) -> {
 					if (value instanceof String) {
-						authSession.setUserSessionNote(key, (String) value);
+						authSession.setUserSessionNote(SMART_NOTE_PREFIX + key, (String) value);
 					}
 				});
 
