@@ -39,6 +39,8 @@ public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	public static final String ID = "smart-application-authenticator";
 
+	public static final SmartLaunchAuthenticator SINGLETON = new SmartLaunchAuthenticator();
+
 	@Override
 	public String getDisplayType() {
 		return "Smart Application Authenticator";
@@ -85,7 +87,7 @@ public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	@Override
 	public Authenticator create(KeycloakSession keycloakSession) {
-		return new SmartLaunchAuthenticator();
+		return SINGLETON;
 	}
 
 	@Override
