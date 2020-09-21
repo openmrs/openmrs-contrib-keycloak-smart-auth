@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -76,6 +77,18 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	@Override
 	public void authenticate(AuthenticationFlowContext context) {
+
+		final String launchContext = context.getAuthenticationSession().getClientNote("client_request_param_launch");
+		System.out.println("launchContext = " + launchContext);
+		if (!StringUtils.isEmpty(launchContext)) {
+			context.attempted();
+			return;
+		} else {
+			selectPatient(context);
+		}
+	}
+
+	private void selectPatient(AuthenticationFlowContext context) {
 		String patientSelectionUrl = null;
 		if (context.getAuthenticatorConfig() != null) {
 			patientSelectionUrl = context.getAuthenticatorConfig().getConfig()
@@ -115,7 +128,6 @@ public class SmartLaunchAuthenticator implements Authenticator {
 			context.attempted();
 			return;
 		}
-
 
 		int validityInSecs = context.getRealm().getActionTokenGeneratedByUserLifespan();
 		int absoluteExpirationInSecs = Time.currentTime() + validityInSecs;
