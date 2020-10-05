@@ -79,9 +79,8 @@ public class SmartLaunchAuthenticator implements Authenticator {
 	public void authenticate(AuthenticationFlowContext context) {
 
 		final String launchContext = context.getAuthenticationSession().getClientNote("client_request_param_launch");
-		System.out.println("launchContext = " + launchContext);
 		if (!StringUtils.isEmpty(launchContext)) {
-			context.attempted();
+			context.success();
 			return;
 		} else {
 			selectPatient(context);
