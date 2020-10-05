@@ -126,7 +126,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		}
 
 		if (!foundMatch) {
-			context.attempted();
+			context.success();
 			return;
 		}
 
