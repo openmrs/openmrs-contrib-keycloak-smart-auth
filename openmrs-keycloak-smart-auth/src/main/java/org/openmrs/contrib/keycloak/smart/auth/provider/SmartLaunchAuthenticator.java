@@ -25,10 +25,12 @@ import org.keycloak.crypto.MacSignatureSignerContext;
 import org.keycloak.crypto.SignatureSignerContext;
 import org.keycloak.jose.jws.JWSBuilder;
 import org.keycloak.models.AuthenticatorConfigModel;
+import org.keycloak.models.ClientScopeModel;
 import org.keycloak.models.Constants;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.representations.JsonWebToken;
 import org.keycloak.services.Urls;
 import org.keycloak.services.messages.Messages;
@@ -41,8 +43,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -64,10 +71,25 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
 
+	public static final String LAUNCH_SCOPE_PREFIX = "launch/";
+
+	public static final String LAUNCH_CLIENT_REQUEST_PARAM = "client_request_param_launch";
+
 	private static final Logger logger = Logger.getLogger(SmartLaunchAuthenticator.class);
 
 	@Override
 	public void authenticate(AuthenticationFlowContext context) {
+
+		final String launchContext = context.getAuthenticationSession().getClientNote(LAUNCH_CLIENT_REQUEST_PARAM);
+		if (!StringUtils.isEmpty(launchContext)) {
+			context.success();
+			return;
+		} else {
+			selectPatient(context);
+		}
+	}
+
+	private void selectPatient(AuthenticationFlowContext context) {
 		String patientSelectionUrl = null;
 		if (context.getAuthenticatorConfig() != null) {
 			patientSelectionUrl = context.getAuthenticatorConfig().getConfig()
@@ -76,6 +98,36 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 		if (patientSelectionUrl == null) {
 			patientSelectionUrl = DEFAULT_PATIENT_SELECTION_APP_URL;
+		}
+
+		String scope = context.getAuthenticationSession().getClientNote(OIDCLoginProtocol.SCOPE_PARAM);
+		Map<String, ClientScopeModel> defaultScopes = context.getAuthenticationSession().getClient()
+				.getClientScopes(true, true);
+
+		if (scope == null) {
+			scope = "";
+		}
+
+		List<String> scopes = Arrays.stream(scope.split("\\s+")).collect(Collectors.toList());
+		String supportedParams = context.getAuthenticatorConfig().getConfig()
+				.get(SmartLaunchAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS);
+		if (supportedParams == null || supportedParams.isEmpty()) {
+			context.attempted();
+			return;
+		}
+
+		List<String> params = Arrays.stream(supportedParams.split("\\s+")).collect(Collectors.toList());
+		boolean foundMatch = false;
+		for (String param : params) {
+			if (scopes.contains(LAUNCH_SCOPE_PREFIX + param) ||
+					defaultScopes.containsKey(LAUNCH_SCOPE_PREFIX + param)) {
+				foundMatch = true;
+			}
+		}
+
+		if (!foundMatch) {
+			context.success();
+			return;
 		}
 
 		int validityInSecs = context.getRealm().getActionTokenGeneratedByUserLifespan();

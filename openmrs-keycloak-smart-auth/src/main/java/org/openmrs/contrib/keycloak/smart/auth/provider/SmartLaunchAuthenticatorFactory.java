@@ -38,6 +38,8 @@ public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	public static final String CONFIG_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "smart-launch-secret-key";
 
+	public static final String CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS = "smart-launch-supported-params";
+
 	public static final String ID = "smart-application-authenticator";
 
 	public static final SmartLaunchAuthenticator SINGLETON = new SmartLaunchAuthenticator();
@@ -74,7 +76,8 @@ public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	@Override
 	public List<ProviderConfigProperty> getConfigProperties() {
-		ProviderConfigProperty patientSelectionUrl = new ProviderConfigProperty(CONFIG_SMART_PATIENT_SELECTION_URL, "Patient Selection Application URL",
+		ProviderConfigProperty patientSelectionUrl = new ProviderConfigProperty(CONFIG_SMART_PATIENT_SELECTION_URL,
+				"Patient Selection Application URL",
 				"URL of the application to redirect to. It has to contain token position marked with \"{TOKEN}\" (without quotes).",
 				STRING_TYPE, SmartLaunchAuthenticator.DEFAULT_PATIENT_SELECTION_APP_URL);
 
@@ -83,7 +86,13 @@ public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 				"HmacSHA256 secret key for smart launch external application.",
 				PASSWORD, SmartLaunchAuthenticator.DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY);
 
-		return Arrays.asList(patientSelectionUrl, smartLaunchKey);
+		ProviderConfigProperty smartLaunchSupportedParams = new ProviderConfigProperty(
+				CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS,
+				"External SMART Launch Supported Params",
+				"Space separated list of Smart launch context parameters supported by external application.",
+				ProviderConfigProperty.STRING_TYPE, null);
+
+		return Arrays.asList(patientSelectionUrl, smartLaunchKey, smartLaunchSupportedParams);
 	}
 
 	@Override
