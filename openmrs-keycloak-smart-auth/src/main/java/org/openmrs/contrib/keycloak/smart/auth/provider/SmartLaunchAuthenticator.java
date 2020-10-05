@@ -73,12 +73,14 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	public static final String LAUNCH_SCOPE_PREFIX = "launch/";
 
+	public static final String LAUNCH_CLIENT_REQUEST_PARAM = "client_request_param_launch";
+
 	private static final Logger logger = Logger.getLogger(SmartLaunchAuthenticator.class);
 
 	@Override
 	public void authenticate(AuthenticationFlowContext context) {
 
-		final String launchContext = context.getAuthenticationSession().getClientNote("client_request_param_launch");
+		final String launchContext = context.getAuthenticationSession().getClientNote(LAUNCH_CLIENT_REQUEST_PARAM);
 		if (!StringUtils.isEmpty(launchContext)) {
 			context.success();
 			return;
