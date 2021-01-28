@@ -82,6 +82,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 		final String launchContext = context.getAuthenticationSession().getClientNote(LAUNCH_CLIENT_REQUEST_PARAM);
 		if (!StringUtils.isEmpty(launchContext)) {
+			context.getAuthenticationSession().setUserSessionNote(SMART_NOTE_PREFIX+"patient",launchContext);
 			context.success();
 			return;
 		} else {
