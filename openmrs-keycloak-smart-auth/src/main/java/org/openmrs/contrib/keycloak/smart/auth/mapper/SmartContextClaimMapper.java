@@ -20,6 +20,7 @@ import org.keycloak.protocol.oidc.mappers.OIDCAttributeMapperHelper;
 import org.keycloak.protocol.oidc.mappers.UserSessionNoteMapper;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.representations.AccessTokenResponse;
+import org.openmrs.contrib.keycloak.smart.auth.provider.SmartLaunchAuthenticator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +74,8 @@ public class SmartContextClaimMapper extends AbstractOIDCProtocolMapper implemen
 			KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
 
 		// Add custom claim to AccessTokenResponse
-		String patientUuid = userSession.getNote("smart-oidc-note.patient");
-		token.getOtherClaims().put("patient",patientUuid);
+		String patientUuid = userSession.getNote(SmartLaunchAuthenticator.SMART_PATIENT_PARAMS);
+		token.getOtherClaims().put("patient", patientUuid);
 		setClaim(token, mappingModel, userSession, session, clientSessionCtx);
 		return token;
 	}

@@ -75,6 +75,8 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	public static final String LAUNCH_CLIENT_REQUEST_PARAM = "client_request_param_launch";
 
+	public static final String SMART_PATIENT_PARAMS = "smart-oidc-note.patient";
+
 	private static final Logger logger = Logger.getLogger(SmartLaunchAuthenticator.class);
 
 	@Override
@@ -82,7 +84,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 		final String launchContext = context.getAuthenticationSession().getClientNote(LAUNCH_CLIENT_REQUEST_PARAM);
 		if (!StringUtils.isEmpty(launchContext)) {
-			context.getAuthenticationSession().setUserSessionNote(SMART_NOTE_PREFIX+"patient",launchContext);
+			context.getAuthenticationSession().setUserSessionNote(SMART_PATIENT_PARAMS, launchContext);
 			context.success();
 			return;
 		} else {
