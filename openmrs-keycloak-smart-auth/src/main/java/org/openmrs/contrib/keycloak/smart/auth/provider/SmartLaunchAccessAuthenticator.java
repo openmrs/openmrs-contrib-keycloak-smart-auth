@@ -46,6 +46,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.keycloak.OAuth2Constants.JWT;
 
@@ -69,7 +70,6 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 		if (launch != null && scope != null) {
 
 			context.getAuthenticationSession().setClientNote(SmartLaunchAuthenticator.SMART_PATIENT_PARAMS, launch);
-			UserModel user = context.getSession().users().getUserByUsername("admin", context.getRealm());
 
 			String accessEndUrl = null;
 			if (context.getAuthenticatorConfig() != null) {
@@ -87,7 +87,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			final String clientId = authSession.getClient().getClientId();
 
 			SmartLaunchAccessActionToken externalToken = new SmartLaunchAccessActionToken(
-					user.getId(),
+					context.getSession().users().getUserByUsername("admin", context.getRealm()).getId(),
 					absoluteExpirationInSecs,
 					AuthenticationSessionCompoundId.fromAuthSession(authSession).getEncodedId()
 			);
@@ -111,7 +111,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			String SubmitActionTokenUrl = Urls
 					.actionTokenBuilder(context.getUriInfo().getBaseUri(), token, clientId, authSession.getTabId())
 					.queryParam(Constants.EXECUTION, context.getExecution().getId())
-					.queryParam("app-token", "{tokenParameterName}")
+					.queryParam(QUERY_PARAM_APP_TOKEN, "{tokenParameterName}")
 					.build(context.getRealm().getName(), "{APP_TOKEN}")
 					.toString();
 
@@ -138,8 +138,12 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 	public void action(AuthenticationFlowContext context) {
 
 		final AuthenticationSessionModel authSession = context.getAuthenticationSession();
+		if (!Objects.equals(authSession.getAuthNote(SMART_ACCESS), "true")) {
+			authenticate(context);
+			return;
+		}
 
-		authSession.removeAuthNote(QUERY_PARAM_APP_TOKEN);
+		authSession.removeAuthNote(SMART_ACCESS);
 
 		String appTokenString = context.getUriInfo().getQueryParameters().getFirst(QUERY_PARAM_APP_TOKEN);
 
@@ -218,7 +222,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 
 		KeyWrapper key = new KeyWrapper();
 		key.setAlgorithm(Algorithm.HS256);
-		key.setSecretKey(getSecretKey(context.getAuthenticatorConfig(), context.getRealm().getDisplayName()));
+		key.setSecretKey(getSecretKey(context.getAuthenticatorConfig(), context.getRealm().getName()));
 		SignatureSignerContext signer = new MacSignatureSignerContext(key);
 
 		return new JWSBuilder().type(JWT).jsonContent(userToken).sign(signer);
