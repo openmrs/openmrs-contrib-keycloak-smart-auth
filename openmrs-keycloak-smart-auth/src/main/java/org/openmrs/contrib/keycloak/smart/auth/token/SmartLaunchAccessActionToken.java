@@ -13,7 +13,7 @@ import org.keycloak.authentication.actiontoken.DefaultActionToken;
 
 public class SmartLaunchAccessActionToken extends DefaultActionToken {
 
-	public static final String TOKEN_TYPE = "smart-launch-access";
+	public static final String TOKEN_TYPE = "smart-launch-access-token";
 
 	private SmartLaunchAccessActionToken() {
 		super();

@@ -56,7 +56,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 
 	public static final String SMART_ACCESS = "smart-access";
 
-	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/ws/rest/v1/smartonfhir/accessConformation?token={TOKEN}";
+	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/ws/rest/v1/smartonfhir/accessConfirmation?token={TOKEN}";
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
 
@@ -164,10 +164,9 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			return;
 		}
 
-		String username = (String) appToken.getOtherClaims().get("username");
+		String username = appToken.getSubject();
 		UserModel user = context.getSession().users().getUserByUsername(username, context.getRealm());
 		context.getAuthenticationSession().setAuthenticatedUser(user);
-		context.getAuthenticationSession().setAuthNote("username", username);
 
 		context.success();
 	}
@@ -196,7 +195,6 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			String accessUrl) throws IOException {
 
 		SmartUserNameToken userToken = new SmartUserNameToken(
-				"admin",
 				absoluteExpirationInSecs,
 				clientId
 		);

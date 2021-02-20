@@ -28,4 +28,10 @@ public class SmartUserNameToken extends JsonWebToken {
 		this.exp = absoluteExpirationInSecs;
 		this.otherClaims.put(DefaultActionToken.JSON_FIELD_AUTHENTICATION_SESSION_ID, authenticationSessionId);
 	}
+
+	public SmartUserNameToken(long absoluteExpirationInSecs, String authenticationSessionId) {
+		this.type = TOKEN_TYPE;
+		this.exp = absoluteExpirationInSecs;
+		this.otherClaims.put(DefaultActionToken.JSON_FIELD_AUTHENTICATION_SESSION_ID, authenticationSessionId);
+	}
 }
