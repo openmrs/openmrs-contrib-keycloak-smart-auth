@@ -23,9 +23,6 @@ import java.util.List;
 import static org.keycloak.provider.ProviderConfigProperty.PASSWORD;
 import static org.keycloak.provider.ProviderConfigProperty.STRING_TYPE;
 
-/**
- * @author hmlnarik
- */
 public class SmartLaunchAuthenticatorFactory implements AuthenticatorFactory {
 
 	private static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {

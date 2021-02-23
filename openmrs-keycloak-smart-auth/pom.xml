@@ -5,13 +5,12 @@
 	<parent>
 		<artifactId>openmrs-keycloak-smart-authentication</artifactId>
 		<groupId>org.openmrs.contrib</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>openmrs-keycloak-smart-auth</artifactId>
 	<packaging>jar</packaging>
-
 
 	<dependencies>
 		<dependency>

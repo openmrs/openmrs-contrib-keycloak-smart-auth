@@ -81,7 +81,6 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 	@Override
 	public void authenticate(AuthenticationFlowContext context) {
-
 		final String launchContext = context.getAuthenticationSession().getClientNote(LAUNCH_CLIENT_REQUEST_PARAM);
 		if (!StringUtils.isEmpty(launchContext)) {
 			context.getAuthenticationSession().setUserSessionNote(SMART_PATIENT_PARAMS, launchContext);
