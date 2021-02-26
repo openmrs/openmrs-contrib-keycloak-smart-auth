@@ -56,7 +56,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 
 	public static final String SMART_ACCESS = "smart-access";
 
-	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/ws/rest/v1/smartonfhir/accessConfirmation?token={TOKEN}";
+	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/smartonfhir/smartAccessConfirmation?token={TOKEN}";
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
 
