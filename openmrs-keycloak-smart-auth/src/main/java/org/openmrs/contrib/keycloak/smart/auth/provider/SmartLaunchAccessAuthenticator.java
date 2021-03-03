@@ -165,6 +165,12 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 		}
 
 		String username = appToken.getSubject();
+
+		if (username == null) {
+			context.attempted();
+			return;
+		}
+
 		UserModel user = context.getSession().users().getUserByUsername(username, context.getRealm());
 		context.getAuthenticationSession().setAuthenticatedUser(user);
 
