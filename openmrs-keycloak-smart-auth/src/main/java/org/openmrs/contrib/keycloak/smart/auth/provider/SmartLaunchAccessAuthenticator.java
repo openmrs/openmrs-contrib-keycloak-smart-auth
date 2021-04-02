@@ -49,6 +49,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static org.keycloak.OAuth2Constants.JWT;
+import static org.openmrs.contrib.keycloak.smart.auth.provider.SmartLaunchAuthenticator.SMART_NOTE_PREFIX;
 
 public class SmartLaunchAccessAuthenticator implements Authenticator {
 
@@ -68,8 +69,6 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 		final String scope = context.getAuthenticationSession().getClientNote(OIDCLoginProtocol.SCOPE_PARAM);
 
 		if (launch != null && scope != null) {
-
-			context.getAuthenticationSession().setClientNote(SmartLaunchAuthenticator.SMART_PATIENT_PARAMS, launch);
 
 			String accessEndUrl = null;
 			if (context.getAuthenticatorConfig() != null) {
@@ -170,6 +169,13 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			context.attempted();
 			return;
 		}
+
+		appToken.getOtherClaims()
+				.forEach((key, value) -> {
+					if (value instanceof String) {
+						authSession.setUserSessionNote(SMART_NOTE_PREFIX + key, (String) value);
+					}
+		});
 
 		UserModel user = context.getSession().users().getUserByUsername(username, context.getRealm());
 		context.getAuthenticationSession().setAuthenticatedUser(user);

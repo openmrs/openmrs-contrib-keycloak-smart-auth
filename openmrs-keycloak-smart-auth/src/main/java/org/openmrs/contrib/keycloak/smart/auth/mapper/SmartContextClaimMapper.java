@@ -31,6 +31,10 @@ public class SmartContextClaimMapper extends AbstractOIDCProtocolMapper implemen
 
 	public static final String PROVIDER_ID = "smart-context-claim-mapper";
 
+	public static final String SMART_PATIENT_PARAMS = "smart-oidc-note.patient";
+
+	public static final String SMART_VISIT_PARAMS = "smart-oidc-note.visit";
+
 	private static final List<ProviderConfigProperty> CONFIG_PROPERTIES = new ArrayList<>();
 
 	static {
@@ -74,8 +78,12 @@ public class SmartContextClaimMapper extends AbstractOIDCProtocolMapper implemen
 			KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
 
 		// Add custom claim to AccessTokenResponse
-		String patientUuid = userSession.getNote(SmartLaunchAuthenticator.SMART_PATIENT_PARAMS);
+		String patientUuid = userSession.getNote(SMART_PATIENT_PARAMS);
+		String visitId = userSession.getNote(SMART_VISIT_PARAMS);
 		token.getOtherClaims().put("patient", patientUuid);
+		if (visitId != null) {
+			token.getOtherClaims().put("encounter", visitId);
+		}
 		setClaim(token, mappingModel, userSession, session, clientSessionCtx);
 		return token;
 	}
