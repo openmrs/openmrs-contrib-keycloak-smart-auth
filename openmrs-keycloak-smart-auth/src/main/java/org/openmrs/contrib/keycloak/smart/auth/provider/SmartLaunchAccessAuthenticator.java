@@ -57,7 +57,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 
 	public static final String SMART_ACCESS = "smart-access";
 
-	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/smartonfhir/smartAccessConfirmation?token={TOKEN}";
+	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/smartonfhir/smartAccessConfirmation?token={TOKEN}&launch={launchUuid}";
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
 
@@ -113,6 +113,8 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 					.queryParam(QUERY_PARAM_APP_TOKEN, "{tokenParameterName}")
 					.build(context.getRealm().getName(), "{APP_TOKEN}")
 					.toString();
+
+			accessEndUrl = accessEndUrl.replace("{launchUuid}",launch);
 
 			try {
 				Response challenge = Response
