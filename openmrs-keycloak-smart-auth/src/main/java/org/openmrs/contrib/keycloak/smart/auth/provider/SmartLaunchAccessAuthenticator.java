@@ -46,6 +46,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.keycloak.OAuth2Constants.JWT;
@@ -114,14 +115,13 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 					.build(context.getRealm().getName(), "{APP_TOKEN}")
 					.toString();
 
-			accessEndUrl = accessEndUrl.replace("{launchUuid}",launch);
-
 			try {
 				Response challenge = Response
 						.status(Response.Status.FOUND)
 						.header("Location",
 								accessEndUrl.replace("{TOKEN}",
-										URLEncoder.encode(SubmitActionTokenUrl, StandardCharsets.UTF_8.name())))
+										URLEncoder.encode(SubmitActionTokenUrl, StandardCharsets.UTF_8.name())).
+										replace("{launchUuid}", launch))
 						.build();
 				context.challenge(challenge);
 			}
@@ -172,12 +172,11 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 			return;
 		}
 
-		appToken.getOtherClaims()
-				.forEach((key, value) -> {
-					if (value instanceof String) {
-						authSession.setUserSessionNote(SMART_NOTE_PREFIX + key, (String) value);
-					}
-		});
+		for (Map.Entry<String, Object> value : appToken.getOtherClaims().entrySet()) {
+			if (value.getValue() != null) {
+				authSession.setUserSessionNote(SMART_NOTE_PREFIX + value.getKey(), (String) value.getValue());
+			}
+		}
 
 		UserModel user = context.getSession().users().getUserByUsername(username, context.getRealm());
 		context.getAuthenticationSession().setAuthenticatedUser(user);

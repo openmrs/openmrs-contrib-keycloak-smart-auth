@@ -79,11 +79,15 @@ public class SmartContextClaimMapper extends AbstractOIDCProtocolMapper implemen
 
 		// Add custom claim to AccessTokenResponse
 		String patientUuid = userSession.getNote(SMART_PATIENT_PARAMS);
-		String visitId = userSession.getNote(SMART_VISIT_PARAMS);
-		token.getOtherClaims().put("patient", patientUuid);
-		if (visitId != null) {
-			token.getOtherClaims().put("encounter", visitId);
+		String visitUuid = userSession.getNote(SMART_VISIT_PARAMS);
+
+		if (patientUuid != null) {
+			token.getOtherClaims().put("patient", patientUuid);
 		}
+		if (visitUuid != null) {
+			token.getOtherClaims().put("encounter", visitUuid);
+		}
+
 		setClaim(token, mappingModel, userSession, session, clientSessionCtx);
 		return token;
 	}
