@@ -46,9 +46,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.keycloak.OAuth2Constants.JWT;
+import static org.openmrs.contrib.keycloak.smart.auth.provider.SmartLaunchAuthenticator.SMART_NOTE_PREFIX;
 
 public class SmartLaunchAccessAuthenticator implements Authenticator {
 
@@ -56,7 +58,7 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 
 	public static final String SMART_ACCESS = "smart-access";
 
-	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/smartonfhir/smartAccessConfirmation?token={TOKEN}";
+	public static final String DEFAULT_PATIENT_ACCESS_URL = "http://localhost:8080/openmrs/smartonfhir/smartAccessConfirmation?token={TOKEN}&launch={launchUuid}";
 
 	public static final String DEFAULT_EXTERNAL_SMART_LAUNCH_SECRET_KEY = "";
 
@@ -68,8 +70,6 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 		final String scope = context.getAuthenticationSession().getClientNote(OIDCLoginProtocol.SCOPE_PARAM);
 
 		if (launch != null && scope != null) {
-
-			context.getAuthenticationSession().setClientNote(SmartLaunchAuthenticator.SMART_PATIENT_PARAMS, launch);
 
 			String accessEndUrl = null;
 			if (context.getAuthenticatorConfig() != null) {
@@ -120,7 +120,8 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 						.status(Response.Status.FOUND)
 						.header("Location",
 								accessEndUrl.replace("{TOKEN}",
-										URLEncoder.encode(SubmitActionTokenUrl, StandardCharsets.UTF_8.name())))
+										URLEncoder.encode(SubmitActionTokenUrl, StandardCharsets.UTF_8.name())).
+										replace("{launchUuid}", launch))
 						.build();
 				context.challenge(challenge);
 			}
@@ -169,6 +170,12 @@ public class SmartLaunchAccessAuthenticator implements Authenticator {
 		if (username == null) {
 			context.attempted();
 			return;
+		}
+
+		for (Map.Entry<String, Object> value : appToken.getOtherClaims().entrySet()) {
+			if (value.getValue() != null) {
+				authSession.setUserSessionNote(SMART_NOTE_PREFIX + value.getKey(), (String) value.getValue());
+			}
 		}
 
 		UserModel user = context.getSession().users().getUserByUsername(username, context.getRealm());
