@@ -110,6 +110,13 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		List<String> scopes = Arrays.stream(scope.split("\\s+")).collect(Collectors.toList());
 		String supportedParams = context.getAuthenticatorConfig().getConfig()
 				.get(SmartLaunchAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS);
+
+		if (scope.contains("launch/encounter")) {
+			patientSelectionUrl = patientSelectionUrl + "&launchType=encounter";
+		} else {
+			patientSelectionUrl = patientSelectionUrl + "&launchType=patient";
+		}
+
 		if (supportedParams == null || supportedParams.isEmpty()) {
 			context.attempted();
 			return;
@@ -208,12 +215,11 @@ public class SmartLaunchAuthenticator implements Authenticator {
 			return;
 		}
 
-		appToken.getOtherClaims()
-				.forEach((key, value) -> {
-					if (value instanceof String) {
-						authSession.setUserSessionNote(SMART_NOTE_PREFIX + key, (String) value);
-					}
-				});
+		for (Map.Entry<String, Object> value : appToken.getOtherClaims().entrySet()) {
+			if (value.getValue() != null) {
+				authSession.setUserSessionNote(SMART_NOTE_PREFIX + value.getKey(), (String) value.getValue());
+			}
+		}
 
 		context.success();
 	}
