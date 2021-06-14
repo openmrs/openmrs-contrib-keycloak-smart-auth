@@ -111,11 +111,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		String supportedParams = context.getAuthenticatorConfig().getConfig()
 				.get(SmartLaunchAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS);
 
-		if (scope.contains("launch/encounter")) {
-			patientSelectionUrl = patientSelectionUrl + "&launchType=encounter";
-		} else {
-			patientSelectionUrl = patientSelectionUrl + "&launchType=patient";
-		}
+		String launchType = getLaunchType(scope);
 
 		if (supportedParams == null || supportedParams.isEmpty()) {
 			context.attempted();
@@ -167,6 +163,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 				.actionTokenBuilder(context.getUriInfo().getBaseUri(), token, clientId, authSession.getTabId())
 				.queryParam(Constants.EXECUTION, context.getExecution().getId())
 				.queryParam(QUERY_PARAM_APP_TOKEN, "{tokenParameterName}")
+				.queryParam("launchType", launchType)
 				.build(context.getRealm().getName(), "{APP_TOKEN}")
 				.toString();
 
@@ -215,11 +212,12 @@ public class SmartLaunchAuthenticator implements Authenticator {
 			return;
 		}
 
-		for (Map.Entry<String, Object> value : appToken.getOtherClaims().entrySet()) {
-			if (value.getValue() != null) {
-				authSession.setUserSessionNote(SMART_NOTE_PREFIX + value.getKey(), (String) value.getValue());
-			}
-		}
+		appToken.getOtherClaims()
+				.forEach((key, value) -> {
+					if (value instanceof String) {
+						authSession.setUserSessionNote(SMART_NOTE_PREFIX + key, (String) value);
+					}
+				});
 
 		context.success();
 	}
@@ -301,5 +299,13 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		}
 
 		return new SecretKeySpec(Base64.decode(secretKey), JavaAlgorithm.HS256);
+	}
+
+	private String getLaunchType(String scope) {
+		if (scope.contains("launch/encounter")) {
+			return "encounter";
+		} else {
+			return "patient";
+		}
 	}
 }
