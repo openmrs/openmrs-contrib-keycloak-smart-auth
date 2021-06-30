@@ -101,7 +101,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 
 		String scope = context.getAuthenticationSession().getClientNote(OIDCLoginProtocol.SCOPE_PARAM);
 		Map<String, ClientScopeModel> defaultScopes = context.getAuthenticationSession().getClient()
-				.getClientScopes(true, true);
+				.getClientScopes(true);
 
 		if (scope == null) {
 			scope = "";
