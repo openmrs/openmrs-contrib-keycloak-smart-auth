@@ -14,14 +14,14 @@ import static org.keycloak.services.resources.LoginActionsService.AUTHENTICATE_P
 import javax.ws.rs.core.Response;
 
 import org.keycloak.authentication.AuthenticationProcessor;
-import org.keycloak.authentication.actiontoken.AbstractActionTokenHander;
+import org.keycloak.authentication.actiontoken.AbstractActionTokenHandler;
 import org.keycloak.authentication.actiontoken.ActionTokenContext;
 import org.keycloak.events.Errors;
 import org.keycloak.events.EventType;
 import org.keycloak.services.messages.Messages;
 import org.openmrs.contrib.keycloak.smart.auth.provider.SmartLaunchAuthenticator;
 
-public class SmartPatientSelectionActionTokenHandler extends AbstractActionTokenHander<SmartPatientSelectionActionToken> {
+public class SmartPatientSelectionActionTokenHandler extends AbstractActionTokenHandler<SmartPatientSelectionActionToken> {
 
 	public SmartPatientSelectionActionTokenHandler() {
 		super(

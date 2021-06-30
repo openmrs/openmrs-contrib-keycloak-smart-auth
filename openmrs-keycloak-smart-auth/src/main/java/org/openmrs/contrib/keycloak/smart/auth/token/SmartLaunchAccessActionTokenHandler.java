@@ -12,7 +12,7 @@ package org.openmrs.contrib.keycloak.smart.auth.token;
 import static org.keycloak.services.resources.LoginActionsService.AUTHENTICATE_PATH;
 
 import org.keycloak.authentication.AuthenticationProcessor;
-import org.keycloak.authentication.actiontoken.AbstractActionTokenHander;
+import org.keycloak.authentication.actiontoken.AbstractActionTokenHandler;
 import org.keycloak.authentication.actiontoken.ActionTokenContext;
 import org.keycloak.events.Errors;
 import org.keycloak.events.EventType;
@@ -21,7 +21,7 @@ import org.openmrs.contrib.keycloak.smart.auth.provider.SmartLaunchAccessAuthent
 
 import javax.ws.rs.core.Response;
 
-public class SmartLaunchAccessActionTokenHandler extends AbstractActionTokenHander<SmartLaunchAccessActionToken> {
+public class SmartLaunchAccessActionTokenHandler extends AbstractActionTokenHandler<SmartLaunchAccessActionToken> {
 
 	public SmartLaunchAccessActionTokenHandler() {
 		super(
