@@ -109,7 +109,6 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		List<String> scopes = Arrays.stream(scope.split("\\s+")).collect(Collectors.toList());
 		String supportedParams = context.getAuthenticatorConfig().getConfig()
 				.get(SmartLaunchAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS);
-
 		if (supportedParams == null || supportedParams.isEmpty()) {
 			context.attempted();
 			return;
