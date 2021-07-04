@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -111,8 +110,6 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		String supportedParams = context.getAuthenticatorConfig().getConfig()
 				.get(SmartLaunchAuthenticatorFactory.CONFIG_EXTERNAL_SMART_LAUNCH_SUPPORTED_PARAMS);
 
-		String launchType = getLaunchType(scope);
-
 		if (supportedParams == null || supportedParams.isEmpty()) {
 			context.attempted();
 			return;
@@ -147,6 +144,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		try {
 			externalToken
 					.setNote("user", buildUserNameToken(context, absoluteExpirationInSecs, clientId, patientSelectionUrl));
+			externalToken.setOtherClaims("launchType", getLaunchScopes(scope));
 		}
 		catch (IOException e) {
 			throw new AuthenticationFlowException("Could not create user token", e, AuthenticationFlowError.INTERNAL_ERROR);
@@ -163,7 +161,6 @@ public class SmartLaunchAuthenticator implements Authenticator {
 				.actionTokenBuilder(context.getUriInfo().getBaseUri(), token, clientId, authSession.getTabId())
 				.queryParam(Constants.EXECUTION, context.getExecution().getId())
 				.queryParam(QUERY_PARAM_APP_TOKEN, "{tokenParameterName}")
-				.queryParam("launchType", launchType)
 				.build(context.getRealm().getName(), "{APP_TOKEN}")
 				.toString();
 
@@ -301,11 +298,8 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		return new SecretKeySpec(Base64.decode(secretKey), JavaAlgorithm.HS256);
 	}
 
-	private String getLaunchType(String scope) {
-		if (scope.contains("launch/encounter")) {
-			return "encounter";
-		} else {
-			return "patient";
-		}
+	private String getLaunchScopes(String scope) {
+		return Arrays.stream(scope.split("\\s")).filter(it -> it.startsWith("launch/")).map(it -> it.substring(6)).collect(
+				Collectors.joining(" "));
 	}
 }
