@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -144,6 +143,7 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		try {
 			externalToken
 					.setNote("user", buildUserNameToken(context, absoluteExpirationInSecs, clientId, patientSelectionUrl));
+			externalToken.setOtherClaims("launchType", getLaunchScopes(scope));
 		}
 		catch (IOException e) {
 			throw new AuthenticationFlowException("Could not create user token", e, AuthenticationFlowError.INTERNAL_ERROR);
@@ -295,5 +295,10 @@ public class SmartLaunchAuthenticator implements Authenticator {
 		}
 
 		return new SecretKeySpec(Base64.decode(secretKey), JavaAlgorithm.HS256);
+	}
+
+	private String getLaunchScopes(String scope) {
+		return Arrays.stream(scope.split("\\s")).filter(it -> it.startsWith("launch/")).map(it -> it.substring(6)).collect(
+				Collectors.joining(" "));
 	}
 }
